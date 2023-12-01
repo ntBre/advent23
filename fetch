@@ -9,9 +9,9 @@ src=$dir/main.awk
 brave $url
 mkdir $dir
 
-curl --cookie ~/aoc_cookie $url/input > $dir/input
+curl --cookie $(cat ~/aoc_cookie) $url/input > $dir/input
 xclip -selection primary -o > $dir/sample
 
-echo "/usr/bin/awk -f" > $src
+echo "#! /usr/bin/awk -f" > $src
 chmod +x $src
 emacsclient -n -r $src
