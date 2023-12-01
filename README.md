@@ -8,7 +8,7 @@ explanations to [my YouTube channel](https://www.youtube.com/@bwestbro).
 ## Day 1
 
 I'm somewhat ashamed to admit this, but I got stuck for a while on part 2 and
-needed a tip [from reddit](reddit1) to get unstuck. I don't want to spoil
+needed a tip [from reddit][reddit1] to get unstuck. I don't want to spoil
 anything here, but if you're getting the answer for the sample input but not
 your puzzle input, you might need the hint given in this post. I don't feel that
 bad about it because it's basically a clarification of the instructions, not a
