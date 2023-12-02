@@ -1,7 +1,5 @@
 #! /usr/bin/awk -f
 
-BEGIN { max_red = 12; max_green = 13; max_blue = 14 }
-
 {
     # Input like:
     # Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -14,19 +12,21 @@ BEGIN { max_red = 12; max_green = 13; max_blue = 14 }
     print game, $0
 
     split($0, rounds, ";")
+    max_red = 0; max_green = 0; max_blue = 0
     for (round in rounds) {
-	printf "\t%s\n", rounds[round]
-	if (!is_valid(rounds[round])) {
-	    next
-	}
+	is_valid(rounds[round]); # reuse to set global colors
+	max_red = max(max_red, red)
+	max_green = max(max_green, green)
+	max_blue = max(max_blue, blue)
     }
-    sum += game
+    power = max_red * max_green * max_blue
+    sum += power
 }
 
 END { print sum }
 
 # check if a single round is valid
-function is_valid(r,     red, green, blue, buf) {
+function is_valid(r,     buf) {
     red = 0; green = 0; blue = 0
     if (match(r, /([0-9]+) red/, buf)) red = buf[1]
     if (match(r, /([0-9]+) green/, buf)) green = buf[1]
@@ -34,3 +34,5 @@ function is_valid(r,     red, green, blue, buf) {
 
     return red <= max_red && green <= max_green && blue <= max_blue
 }
+
+function max(n, m) { return n > m ? n : m }
