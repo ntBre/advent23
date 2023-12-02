@@ -14,4 +14,9 @@ your puzzle input, you might need the hint given in this post. I don't feel that
 bad about it because it's basically a clarification of the instructions, not a
 programming hint.
 
+## Day 2
+
+Today felt much more approachable, just some straightforward string splitting
+and a few regular expressions. Perfect for awk!
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
