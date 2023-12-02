@@ -6,7 +6,6 @@ dir=day$day
 url="https://adventofcode.com/$year/day/$day"
 src=$dir/main.awk
 
-brave $url
 mkdir $dir
 
 curl --cookie $(cat ~/aoc_cookie) $url/input > $dir/input
