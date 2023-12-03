@@ -19,4 +19,9 @@ programming hint.
 Today felt much more approachable, just some straightforward string splitting
 and a few regular expressions. Perfect for awk!
 
+## Day 3
+
+Conceptually not too bad, just watch out for those off-by-one errors! And
+double-check the symbols that can be used...
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
