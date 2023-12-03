@@ -10,35 +10,38 @@ BEGIN { FS = "" }
 
 END {
     for (row = 1; row <= NR; row++) {
-	for (i = 1; i <= fields; i++) {
-	    c = check()
-	    if (grid[row, i] ~ /[0-9]/ && c) {
-		cur = current()
-		tot += cur
+	for (col = 1; col <= fields; col++) {
+	    if (grid[row, col] ~ /[*]/ && check()) {
+		tot += PROD
 	    }
 	}
     }
     print tot
 }
 
-# grid search for symbols from [row-1..row+1] and [i-1..i+1], skipping row and i
-# themselves
-function check(    j, k) {
+# grid search for symbols from [row-1..row+1] and [col-1..col+1], skipping row
+# and col themselves
+function check(    j, k, n) {
+    n = 0
+    PROD = 1
     for (j = row-1; j <= row+1; j++) {
-	for (k = i-1; k <= i+1; k++) {
-	    if (j == row && k == i) continue
-	    if ((j, k) in grid && grid[j, k] ~ /[#$%&*+/=@-]/) {
-		return grid[j, k];
+	for (k = col-1; k <= col+1; k++) {
+	    if (j == row && k == col) continue
+	    if ((j, k) in grid && grid[j, k] ~ /[0-9]/) {
+		cur = current(j, k)
+		PROD *= cur
+		k = JMP
+		n += 1
 	    }
 	}
     }
-    return 0
+    return n == 2
 }
 
-# find the whole number the current digit is part of
-function current(    j, k, buf) {
-    for (j = i; grid[row, j] ~ /[0-9]/; j--) # search left first
-    for (k = i; grid[row, k] ~ /[0-9]/ && k <= fields; k++); # search right
-    i = k # advance i beyond the current digit
-    return substr(full[row], j+1, k-(j+1))
+# find the whole number the digit starting at grid[r, c] is part of
+function current(r, c,    j, k, buf) {
+    for (j = c; grid[r, j] ~ /[0-9]/; j--); # search left first
+    for (k = c; grid[r, k] ~ /[0-9]/ && k <= fields; k++); # search right
+    JMP = k # use a global to advance
+    return substr(full[r], j+1, k-(j+1))
 }
