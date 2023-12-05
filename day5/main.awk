@@ -1,6 +1,12 @@
 #! /usr/bin/awk -f
 
-/seeds/ { for (i = 2; i<=NF; i++) seeds[$i] }
+/seeds/ {
+    for (i = 2; i<=NF; i+=2) {
+	for (j = $i; j < $i + $(i+1); j++) {
+	    seeds[j]
+	}
+    }
+}
 $2 ~ /map/ { state = $1; next }
 /^$/ { next }
 
@@ -29,7 +35,7 @@ function get(arr, i,    a, sp) {
     for (a in arr) {
 	split(a, sp)
 	src = sp[2]; dst = sp[1]; rng = sp[3]
-	if (i >= src && i <= src+rng) {
+	if (i >= src && i < src+rng) {
 	    return dst + (i - src)
 	}
     }
