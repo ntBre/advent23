@@ -30,4 +30,13 @@ Today actually felt like one of the early puzzles. Part 2 required a little bit
 of interesting thought to do it in one pass, but the solution felt nice and
 simple. That combination makes for a perfect puzzle.
 
+## Day 5
+
+Today was a conceptually simple puzzle, but the really naive solution for part 2
+will use a colossal amount of memory. The slightly less naive solution uses a
+constant amount of memory but requires a lot of CPU time. I spent much, much
+longer than I'd like to admit trying to find the clever, efficient solution.
+Finally, I gave up and translated my brute force algorithm from AWK to Rust and
+had my second star in 2 minutes...
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
