@@ -25,5 +25,15 @@ END {
     }
 }
 
-function get(arr, i) { return (i in arr) ? arr[i] : i }
-function make_map(arr,    i) { for (i = 0; i < $3; i++) arr[$2 + i] = $1 + i }
+function get(arr, i,    a, sp) {
+    for (a in arr) {
+	split(a, sp)
+	src = sp[2]; dst = sp[1]; rng = sp[3]
+	if (i >= src && i <= src+rng) {
+	    return dst + (i - src)
+	}
+    }
+    return i
+}
+
+function make_map(arr) { arr[$0] }
