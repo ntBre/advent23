@@ -1,17 +1,14 @@
 #! /usr/bin/awk -f
 
 {print}
-/Time/ { for (i = 2; i<=NF; i++) times[i-1] = $i }
-/Distance/ { for (i = 2; i<=NF; i++) dists[i-1] = $i }
+/Time/ { for (i = 2; i<=NF; i++) time = time $i }
+/Distance/ { for (i = 2; i<=NF; i++) dist = dist $i }
 
 END {
 	prod = 1
-	for (i = 1; i<=NF; i++) {
-		c = count(times[i], dists[i])
-		print times[i], dists[i], c
-		if (c) prod *= c
-	}
-	print prod
+	print(time, dist)
+	c = count(int(time), int(dist))
+	print c
 }
 
 # return the number of ways to beat dist
