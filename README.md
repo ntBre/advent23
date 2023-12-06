@@ -39,4 +39,10 @@ longer than I'd like to admit trying to find the clever, efficient solution.
 Finally, I gave up and translated my brute force algorithm from AWK to Rust and
 had my second star in 2 minutes...
 
+## Day 6
+
+Easiest day so far. After yesterday I was getting quite nervous about part 2,
+but the naive solution took only 5.51 seconds to run, and a small optimization
+brings it down to 3.22 seconds, very reasonable.
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
