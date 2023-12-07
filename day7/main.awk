@@ -7,7 +7,7 @@ BEGIN { FS = "" }
 	for (i = 1; i<=5; i++) {
 		switch ($i) {
 		case "T": v = 10; break
-		case "J": v = 11; break
+		case "J": v =  0; break
 		case "Q": v = 12; break
 		case "K": v = 13; break
 		case "A": v = 14; break
@@ -15,6 +15,9 @@ BEGIN { FS = "" }
 		}
 		buf = buf " " v
 		hand[$i]++
+	}
+	if ("J" in hand) {
+		process_joker(hand)
 	}
 	switch (length(hand)) {
 	case 1:
@@ -59,6 +62,22 @@ function is_two_pair(hand) {
 			return 0
 	return 1
 }
+
+function process_joker(hand,    nj, max, dst) {
+	for (h in hand) {
+		if (h == "J")
+			nj = hand[h]
+		else {
+			if (hand[h] > max) { # jokers go on previously max count
+				max = hand[h]
+				dst = h
+			}
+		}
+	}
+	hand[dst] += nj
+	delete hand["J"]
+}
 ' input | sort -n -k1 -k2 -k3 -k4 -k5 -k6 | awk '{print} {sum += NR * $NF} END { print sum }'
 
-# solution 250946742
+# part 1 250946742
+# part 2 251824095
