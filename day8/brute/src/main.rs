@@ -1,4 +1,7 @@
-use std::fs::read_to_string;
+use std::{
+    cmp::{max, min},
+    fs::read_to_string,
+};
 
 const A: u16 = 10;
 const Z: u16 = 35;
@@ -35,20 +38,38 @@ fn main() {
     }
 
     let sl = steps.len();
-    let mut res = 0;
-    while !check(&cur) {
-        let t = if steps[res % sl] { &rights } else { &lefts };
-        for n in cur.iter_mut() {
+    let mut res = Vec::new();
+    for n in cur.iter_mut() {
+        let mut i = 0;
+        while !ends_with(*n, Z) {
+            let t = if steps[i % sl] { &rights } else { &lefts };
             *n = t[*n as usize];
+            i += 1;
         }
-        res += 1;
+        res.push(i);
     }
-    dbg!(res);
+    let ret = lcm(res);
+    dbg!(ret);
 }
 
-#[inline]
-fn check(nodes: &Vec<u16>) -> bool {
-    nodes.iter().all(|n| ends_with(*n, Z))
+fn lcm(res: Vec<usize>) -> usize {
+    let mut ret = res[0];
+    for r in &res[1..] {
+        ret = ret * r / gcd(ret, *r);
+    }
+    ret
+}
+
+fn gcd(a: usize, b: usize) -> usize {
+    let mut ks = vec![max(a, b), min(a, b)];
+    for k in 2.. {
+        let rk = ks[k - 2] % ks[k - 1];
+        if rk == 0 {
+            return ks[k - 1];
+        }
+        ks.push(rk);
+    }
+    unreachable!()
 }
 
 #[inline]
