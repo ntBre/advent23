@@ -71,4 +71,13 @@ I was very surprised to see how high the leaderboard times were today, but I
 guess this is the second-largest number of lines I've had to write (after day
 5). The times also reflect this, with day 5 still being the longest so far.
 
+## Day 8
+
+I could blame [this post][reddit2] for spoiling me, but I think I went to reddit
+looking for hints while waiting for my brute force version to run. At least my
+optimization attempts made it easy to accommodate the mathematical solution. In
+my "defense" the post was tagged "Funny" not "Spoiler," and I still had to
+figure out how to apply the math concept it mentioned.
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
+[reddit2]: https://www.reddit.com/r/adventofcode/comments/18dixqk/2023_day_8_part_2_come_to_papa_wait_a_minute/
