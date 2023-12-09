@@ -84,5 +84,11 @@ claim not to have cheated too.
 
 ![Day 8 Part 2 Result](.pics/day8.png)
 
+## Day 9
+
+Today I just used Rust. I wrote a couple of lines of AWK and then realized that
+the lack of real 2D arrays was going to be a real pain. It was pretty easy after
+the switch, though.
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
 [reddit2]: https://www.reddit.com/r/adventofcode/comments/18dixqk/2023_day_8_part_2_come_to_papa_wait_a_minute/
