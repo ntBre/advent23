@@ -79,5 +79,10 @@ optimization attempts made it easy to accommodate the mathematical solution. In
 my "defense" the post was tagged "Funny" not "Spoiler," and I still had to
 figure out how to apply the math concept it mentioned.
 
+Update: my brute force solution finished after almost 18 hours, so now I can
+claim not to have cheated too.
+
+![Day 8 Part 2 Result](.pics/day8.png)
+
 [reddit1]: https://www.reddit.com/r/adventofcode/comments/1884fpl/2023_day_1for_those_who_stuck_on_part_2/
 [reddit2]: https://www.reddit.com/r/adventofcode/comments/18dixqk/2023_day_8_part_2_come_to_papa_wait_a_minute/
