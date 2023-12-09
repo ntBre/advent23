@@ -2,87 +2,56 @@ use std::fs::read_to_string;
 
 fn main() {
     let inp = std::env::args().nth(1).unwrap();
-    let sum = part2(&inp);
-    dbg!(sum);
+    dbg!(part1(&inp), part2(&inp));
 }
 
-#[allow(unused)]
-fn part1(inp: &str) -> isize {
-    let lines = load(inp);
-
-    let mut sum = 0;
-    for line in lines {
+fn inner(
+    inp: &str,
+    get: fn(v: &Vec<isize>) -> isize,
+    add: fn(v: &mut Vec<isize>, x: isize, y: isize),
+) -> isize {
+    load(inp).into_iter().fold(0, |acc, line| {
         let mut rows = reduce(line);
-        let mut a;
         for r in (1..rows.len()).rev() {
-            let x = rows[r].last().unwrap();
-            let y = rows[r - 1].last().unwrap();
-            a = x + y;
-            rows[r - 1].push(a);
+            let x = get(&rows[r]);
+            let y = get(&rows[r - 1]);
+            add(&mut rows[r - 1], x, y);
         }
-        sum += rows[0].last().unwrap();
-    }
-    sum
+        acc + get(&rows[0])
+    })
+}
+
+fn part1(inp: &str) -> isize {
+    inner(inp, |v| v[v.len() - 1], |v, x, y| v.push(x + y))
 }
 
 fn part2(inp: &str) -> isize {
-    let lines = load(inp);
-
-    let mut sum = 0;
-    for line in lines {
-        let mut rows = reduce(line);
-        let mut a;
-        for r in (1..rows.len()).rev() {
-            let x = rows[r].first().unwrap();
-            let y = rows[r - 1].first().unwrap();
-            a = y - x;
-            rows[r - 1].insert(0, a);
-        }
-        sum += rows[0].first().unwrap();
-    }
-    sum
+    inner(inp, |v| v[0], |v, x, y| v.insert(0, y - x))
 }
 
 fn load(inp: &str) -> Vec<Vec<isize>> {
-    let s = read_to_string(inp).unwrap();
-
-    let mut lines = Vec::new();
-    for line in s.lines() {
-        let l: Vec<_> = line
-            .split_ascii_whitespace()
-            .map(|s| s.parse::<isize>().unwrap())
-            .collect();
-        lines.push(l);
-    }
-    lines
+    read_to_string(inp)
+        .unwrap()
+        .lines()
+        .map(|line| {
+            line.split_ascii_whitespace().flat_map(str::parse).collect()
+        })
+        .collect()
 }
 
 fn reduce(mut line: Vec<isize>) -> Vec<Vec<isize>> {
-    let mut ret = Vec::new();
-    ret.push(line.clone());
+    let mut ret = vec![line.clone()];
     while !line.iter().all(|&x| x == 0) {
-        let mut buf = Vec::new();
-        for i in 1..line.len() {
-            let d = line[i] - line[i - 1];
-            buf.push(d);
-        }
+        let buf: Vec<_> =
+            (1..line.len()).map(|i| line[i] - line[i - 1]).collect();
         line = buf.clone();
         ret.push(buf);
     }
     ret
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn p1() {
-        assert_eq!(part1("input"), 1479011877);
-    }
-
-    #[test]
-    fn p2() {
-        assert_eq!(part2("input"), 973);
-    }
+#[test]
+fn check() {
+    assert_eq!(part1("input"), 1479011877);
+    assert_eq!(part2("input"), 973);
 }
