@@ -2,6 +2,11 @@ use std::fs::read_to_string;
 
 fn main() {
     let inp = std::env::args().nth(1).unwrap();
+    let sum = part1(&inp);
+    dbg!(sum);
+}
+
+fn part1(inp: &str) -> isize {
     let s = read_to_string(inp).unwrap();
 
     let mut lines = Vec::new();
@@ -25,7 +30,7 @@ fn main() {
         }
         sum += rows[0].last().unwrap();
     }
-    dbg!(sum);
+    sum
 }
 
 fn reduce(mut line: Vec<isize>) -> Vec<Vec<isize>> {
@@ -41,4 +46,14 @@ fn reduce(mut line: Vec<isize>) -> Vec<Vec<isize>> {
         ret.push(buf);
     }
     ret
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn p1() {
+        assert_eq!(part1("input"), 1479011877);
+    }
 }
