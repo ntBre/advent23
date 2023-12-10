@@ -34,6 +34,7 @@ impl Grid {
         (self.0.len(), self.0[0].len())
     }
 
+    #[allow(unused)]
     fn dump(&self) {
         for row in &self.0 {
             for tile in row {
@@ -55,14 +56,10 @@ impl Index<Point> for Grid {
 type Point = (usize, usize);
 
 fn main() {
-    let grid = Grid::load("../sample");
-    grid.dump();
+    let grid = Grid::load("../input");
     let start = grid.find_start();
     let mut start = Node::new(0, start, start);
-    let done = start.update_children(&grid, start.pos);
-    dbg!(done);
-
-    dbg!(&start);
+    assert!(start.update_children(&grid, start.pos));
     dbg!(start.max_dist() / 2);
 }
 
