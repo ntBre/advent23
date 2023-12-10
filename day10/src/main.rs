@@ -42,7 +42,7 @@ fn main() {
     }
 
     let start = start.unwrap();
-    let mut start = Node::new(0, start, start);
+    let mut start = Node::new(start, start);
     grid.dump();
     let done = start.update_children(&grid, start.pos);
     dbg!(done);
@@ -52,16 +52,14 @@ fn main() {
 
 #[derive(Clone, Debug)]
 struct Node {
-    dist: usize,
     pos: Point,
     parent: Point,
     children: Vec<Node>,
 }
 
 impl Node {
-    fn new(dist: usize, pos: Point, parent: Point) -> Self {
+    fn new(pos: Point, parent: Point) -> Self {
         Self {
-            dist,
             pos,
             parent,
             children: Vec::new(),
@@ -71,7 +69,7 @@ impl Node {
     fn update_children(&mut self, grid: &Grid, start: Point) -> bool {
         for pos in adjacent(&grid, self.pos) {
             if pos != self.parent {
-                self.children.push(Node::new(self.dist + 1, pos, self.pos));
+                self.children.push(Node::new(pos, self.pos));
             }
         }
         let done = self.children.iter().any(|p| p.pos == start);
