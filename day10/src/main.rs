@@ -1,8 +1,35 @@
-use std::{fs::read_to_string, ops::Index};
+use std::{
+    cmp::max,
+    fmt::{Debug, Display},
+    fs::read_to_string,
+    ops::Index,
+    path::Path,
+};
 
 struct Grid(Vec<Vec<char>>);
 
 impl Grid {
+    fn load(path: impl AsRef<Path>) -> Self {
+        Grid(
+            read_to_string(path)
+                .unwrap()
+                .lines()
+                .map(|s| s.chars().collect())
+                .collect(),
+        )
+    }
+
+    fn find_start(&self) -> Point {
+        for (i, row) in self.0.iter().enumerate() {
+            for (j, tile) in row.iter().enumerate() {
+                if *tile == 'S' {
+                    return (i, j);
+                }
+            }
+        }
+        unreachable!()
+    }
+
     fn shape(&self) -> (usize, usize) {
         (self.0.len(), self.0[0].len())
     }
@@ -28,34 +55,53 @@ impl Index<Point> for Grid {
 type Point = (usize, usize);
 
 fn main() {
-    let s = read_to_string("../sample").unwrap();
-    let grid = Grid(s.lines().map(|s| s.chars().collect()).collect());
-
-    let mut start = None;
-    'outer: for (i, row) in grid.0.iter().enumerate() {
-        for (j, tile) in row.iter().enumerate() {
-            if *tile == 'S' {
-                start = Some((i, j));
-                break 'outer;
-            }
-        }
-    }
-
-    let start = start.unwrap();
-    let mut start = Node::new(0, start, start);
+    let grid = Grid::load("../sample");
     grid.dump();
+    let start = grid.find_start();
+    let mut start = Node::new(0, start, start);
     let done = start.update_children(&grid, start.pos);
     dbg!(done);
 
-    dbg!(start);
+    dbg!(&start);
+    dbg!(start.max_dist() / 2);
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 struct Node {
     dist: usize,
     pos: Point,
     parent: Point,
     children: Vec<Node>,
+}
+
+impl Debug for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self)
+    }
+}
+
+impl Display for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let w = f.width().unwrap_or(0);
+        write!(
+            f,
+            "Node(dist: {}, pos: {:?}, parent: {:?}, children: [",
+            self.dist, self.pos, self.parent
+        )?;
+        for c in &self.children {
+            write!(f, "\n")?;
+            for _ in 0..w + 1 {
+                write!(f, "\t")?;
+            }
+            write!(f, "{c:w$}", w = w + 2)?;
+        }
+        if !self.children.is_empty() {
+            for _ in 0..w + 1 {
+                write!(f, "\t")?;
+            }
+        }
+        writeln!(f, "])")
+    }
 }
 
 impl Node {
@@ -86,27 +132,60 @@ impl Node {
         }
         false
     }
+
+    fn max_dist(&self) -> usize {
+        max(
+            self.dist,
+            self.children
+                .iter()
+                .map(|c| c.max_dist())
+                .max()
+                .unwrap_or(0),
+        )
+    }
+}
+
+#[derive(PartialEq)]
+enum Dir {
+    N,
+    S,
+    E,
+    W,
 }
 
 /// returns a list of pipes adjacent to `p`, including the parent
 fn adjacent(grid: &Grid, p: Point) -> Vec<Point> {
     let (x, y) = p; // x is actually the vertical direction, oops
     let (r, c) = grid.shape();
+    // TODO I'm not checking if the source pipe (pipe at p) can actually go in
+    // all of these directions
+    let pipe = grid[p];
     let mut ret = Vec::new();
+    use Dir::*;
+    let checks = match pipe {
+        '|' => vec![N, S],
+        '-' => vec![E, W],
+        'L' => vec![N, E],
+        'J' => vec![N, W],
+        '7' => vec![S, W],
+        'F' => vec![S, E],
+        'S' => vec![N, S, E, W],
+        _ => unreachable!(),
+    };
     // from south
-    if x > 0 && is_pipe(grid[(x - 1, y)], "|F7S") {
+    if x > 0 && is_pipe(grid[(x - 1, y)], "|F7S") && checks.contains(&N) {
         ret.push((x - 1, y));
     }
     // from north
-    if x < c - 2 && is_pipe(grid[(x + 1, y)], "|LJS") {
+    if x < c - 1 && is_pipe(grid[(x + 1, y)], "|LJS") && checks.contains(&S) {
         ret.push((x + 1, y));
     }
     // from east
-    if y > 0 && is_pipe(grid[(x, y - 1)], "-FLS") {
+    if y > 0 && is_pipe(grid[(x, y - 1)], "-FLS") && checks.contains(&W) {
         ret.push((x, y - 1));
     }
     // from west
-    if y < r - 2 && is_pipe(grid[(x, y + 1)], "-J7S") {
+    if y < r - 1 && is_pipe(grid[(x, y + 1)], "-J7S") && checks.contains(&E) {
         ret.push((x, y + 1));
     }
     ret
@@ -118,19 +197,44 @@ fn is_pipe(c: char, typ: &str) -> bool {
 
 #[test]
 fn adj() {
-    let s = read_to_string("sample").unwrap();
-    let grid = Grid(s.lines().map(|s| s.chars().collect()).collect());
-    grid.dump();
     let tests = [
-        ((1, 1), vec![(2, 1), (1, 2)]),
-        ((2, 1), vec![(1, 1), (3, 1)]),
-        ((1, 2), vec![(1, 1), (1, 3)]),
-        ((1, 3), vec![(2, 3), (1, 2)]),
-        ((3, 1), vec![(2, 1), (3, 2)]),
+        ("sample", (1, 1), vec![(2, 1), (1, 2)]),
+        ("sample", (2, 1), vec![(1, 1), (3, 1)]),
+        ("sample", (1, 2), vec![(1, 1), (1, 3)]),
+        ("sample", (1, 3), vec![(2, 3), (1, 2)]),
+        ("sample", (3, 1), vec![(2, 1), (3, 2)]),
+        //
+        ("sample2", (1, 2), vec![(1, 1), (1, 3)]),
     ];
 
-    for (p, want) in tests {
+    for (t, (file, p, want)) in tests.into_iter().enumerate() {
+        let grid = Grid::load(file);
+        println!();
+        grid.dump();
         let got = adjacent(&grid, p);
+        assert_eq!(
+            got, want,
+            "test {t} failed on `{file}` and {p:?}:\ngot {got:?}, want {want:?}",
+        );
+    }
+}
+
+#[test]
+fn full() {
+    let tests = [
+        ("sample", 4),  // simple short loop
+        ("sample2", 4), // complex short loop
+        ("sample3", 8), // simple long loop
+        ("sample4", 8), // complex long loop
+    ];
+    for (file, want) in tests {
+        let grid = Grid::load(file);
+        let start = grid.find_start();
+        let mut start = Node::new(0, start, start);
+        let done = start.update_children(&grid, start.pos);
+        // dbg!(&start);
+        assert!(done);
+        let got = start.max_dist() / 2;
         assert_eq!(got, want);
     }
 }
